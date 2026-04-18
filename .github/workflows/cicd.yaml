@@ -67,7 +67,17 @@ jobs:
             NOTION_CALENDAR_DB_ID=${{ secrets.NOTION_CALENDAR_DB_ID }}
             EOF
 
-            docker-compose down || true
-            docker-compose up -d
+            docker stop react_agent_container || true
+            docker rm react_agent_container || true
+
+            docker run -d \
+              --name react_agent_container \
+              -p 8000:8000 \
+              --restart unless-stopped \
+              -e GROQ_API_KEY="${{ secrets.GROQ_API_KEY }}" \
+              -e NOTION_API_KEY="${{ secrets.NOTION_API_KEY }}" \
+              -e NOTION_NOTES_DB_ID="${{ secrets.NOTION_NOTES_DB_ID }}" \
+              -e NOTION_CALENDAR_DB_ID="${{ secrets.NOTION_CALENDAR_DB_ID }}" \
+              ghcr.io/$REPO_LOWER:main
 
             docker logs --tail 50 react_agent_container
