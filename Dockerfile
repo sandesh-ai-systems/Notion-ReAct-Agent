@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y git && rm -rd /var/lib/apt/lists/*
 RUN pip install uv
 
 COPY pyproject.toml uv.lock ./
-RUN uv sync --system
+RUN uv sync
 
 COPY . .
 
