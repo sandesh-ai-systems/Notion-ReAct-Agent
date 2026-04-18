@@ -2,17 +2,17 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y git && rm -rd /var/lib/apt/lists/*
+# Install dependencies
+COPY pyproject.toml ./
+RUN pip install .
 
-RUN pip install uv
-
-COPY pyproject.toml uv.lock ./
-RUN uv sync
-
+# Copy code
 COPY . .
 
-#Expose Port
+# Expose port
 EXPOSE 8000
 
+# Run app
 CMD ["python", "-m", "uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000"]
